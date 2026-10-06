@@ -6,6 +6,44 @@
 
 {% block main_content %}
 
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>Rs. {{ student_fee.total_fee }}</h3>
+                <p>Total Fee</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>Rs. {{ student_fee.paid_fee }}</h3>
+                <p>Paid Fee</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>Rs. {{ student_fee.remaining_fee }}</h3>
+                <p>Remaining Fee</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ student_fee.fee_status }}</h3>
+                <p>Fee Status</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% load static %}
 
 <section class="content">

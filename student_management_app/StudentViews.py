@@ -5,7 +5,7 @@ from django.core.files.storage import FileSystemStorage #To upload Profile Pictu
 from django.urls import reverse
 import datetime # To Parse input DateTime into Python Date Time Object
 
-from student_management_app.models import CustomUser, Staffs, Courses, Subjects, Students, Attendance, AttendanceReport, LeaveReportStudent, FeedBackStudent, StudentResult
+from student_management_app.models import CustomUser, Staffs, Courses, Subjects, Students, Attendance, AttendanceReport, LeaveReportStudent, FeedBackStudent, StudentResult , StudentFee
 
 
 def student_home(request):
@@ -21,6 +21,7 @@ def student_home(request):
     data_present = []
     data_absent = []
     subject_data = Subjects.objects.filter(course_id=student_obj.course_id)
+    student_fee = StudentFee.objects.filter(student_id=student_obj).first()
     for subject in subject_data:
         attendance = Attendance.objects.filter(subject_id=subject.id)
         attendance_present_count = AttendanceReport.objects.filter(attendance_id__in=attendance, status=True, student_id=student_obj.id).count()
@@ -36,7 +37,8 @@ def student_home(request):
         "total_subjects": total_subjects,
         "subject_name": subject_name,
         "data_present": data_present,
-        "data_absent": data_absent
+        "data_absent": data_absent,
+        "student_fee": student_fee
     }
     return render(request, "student_template/student_home_template.html", context)
 

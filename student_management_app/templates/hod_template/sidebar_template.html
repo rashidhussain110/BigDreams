@@ -3,9 +3,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
       <a href="{% url 'admin_home' %}" class="brand-link">
-        <img src="{% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+        <img src="{% static 'dist/img/AdminLTELogo.JPEG' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
-        <span class="brand-text font-weight-light">Open University</span>
+        <span class="brand-text font-weight-light">GDC CS Department</span>
       </a>
 
       <!-- Sidebar -->
@@ -13,7 +13,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+            <img src="{% static 'dist/img/hod.jpg' %}" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
             <a href="{% url 'admin_profile' %}" class="d-block">{{ user.first_name }} {{ user.last_name }}</a>
@@ -142,6 +142,15 @@
               </a>
             </li>
 
+            <li class="nav-item">
+    {% url 'manage_fee' as manage_fee %}
+    <a href="{{ manage_fee }}" class="nav-link {% if request.path == manage_fee %} active {% endif %}">
+        <i class="nav-icon fas fa-money-bill-wave"></i>
+        <p>
+            Fee Management
+        </p>
+    </a>
+</li>
 
             <li class="nav-item">
               {% url 'admin_view_attendance' as admin_view_attendance %}

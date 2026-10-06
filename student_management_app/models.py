@@ -11,6 +11,9 @@ class SessionYearModel(models.Model):
     session_end_year = models.DateField()
     objects = models.Manager()
 
+    def __str__(self):
+        return str(self.session_start_year.year) + " - " + str(self.session_end_year.year)
+
 
 
 # Overriding the Default Django Auth User and adding One More Field (user_type)
@@ -45,8 +48,9 @@ class Courses(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
 
-    # def __str__(self):
-	#     return self.course_name
+    def __str__(self):
+        return self.course_name
+
 
 
 
@@ -67,8 +71,13 @@ class Students(models.Model):
     gender = models.CharField(max_length=50)
     profile_pic = models.FileField()
     address = models.TextField()
-    course_id = models.ForeignKey(Courses, on_delete=models.DO_NOTHING, default=1)
-    session_year_id = models.ForeignKey(SessionYearModel, on_delete=models.CASCADE)
+    course_id = models.ForeignKey(Courses, on_delete=models.DO_NOTHING, null=True, blank=True)
+    session_year_id = models.ForeignKey(
+    SessionYearModel,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True
+)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
@@ -183,7 +192,12 @@ def create_user_profile(sender, instance, created, **kwargs):
         if instance.user_type == 2:
             Staffs.objects.create(admin=instance)
         if instance.user_type == 3:
-            Students.objects.create(admin=instance, course_id=Courses.objects.get(id=1), session_year_id=SessionYearModel.objects.get(id=1), address="", profile_pic="", gender="")
+            Students.objects.create(
+        admin=instance,
+        address="",
+        profile_pic="",
+        gender=""
+    )
     
 
 @receiver(post_save, sender=CustomUser)
@@ -197,3 +211,42 @@ def save_user_profile(sender, instance, **kwargs):
     
 
 
+class StudentFee(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    student_id = models.OneToOneField(
+        Students,
+        on_delete=models.CASCADE
+    )
+
+    total_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    paid_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+
+    @property
+    def remaining_fee(self):
+        return self.total_fee - self.paid_fee
+
+    @property
+    def fee_status(self):
+        if self.paid_fee == 0:
+            return "Unpaid"
+        elif self.paid_fee < self.total_fee:
+            return "Partial"
+        else:
+            return "Paid"
+        
+        

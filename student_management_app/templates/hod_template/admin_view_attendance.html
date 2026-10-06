@@ -137,14 +137,14 @@
                 //console.log(session_year_id)
 
                 $.ajax({
-                    url:'{% url 'admin_get_attendance_dates' %}',
-                    type:'POST',
-                    data:{subject:subject, session_year_id:session_year_id},
-                })
-
+    url:"{% url 'admin_get_attendance_dates' %}",
+    type:'POST',
+    data:{subject:subject, session_year_id:session_year_id},
+    dataType: "json",
+})
                 
                 .done(function(response){
-                    var json_data = JSON.parse(response);
+                    var json_data = response;
                     if(json_data.length>0)
                     {
                         var html_data = "";
@@ -191,14 +191,14 @@
             var attendance_date=$("#attendance_date").val()
 
             $.ajax({
-                url:'{% url 'admin_get_attendance_student' %}',
+                url:"{% url 'admin_get_attendance_student' %}",
                 type:'POST',
                 data:{attendance_date:attendance_date},
             })
 
             
             .done(function(response){
-                var json_data=JSON.parse(response);
+                var json_data = JSON.parse(response);
                 //console.log(json_data)
                 //Displaying Attendance Date Input and Students Attendance
                 var div_data="<div class='form-group'><label>Student Attendance: </label></div>"
