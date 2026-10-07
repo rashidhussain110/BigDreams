@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 import json
+from datetime import date
 from django.db import transaction
 from django.db.models.functions import Lower, Trim
 from student_management_app.models import CustomUser, Staffs, Courses, Subjects, Students, SessionYearModel, FeedBackStudent, FeedBackStaffs, LeaveReportStudent, LeaveReportStaff, Attendance, AttendanceReport, StudentFee
@@ -383,7 +384,8 @@ def add_student_save(request):
         user.students.save()
 
         StudentFee.objects.create(
-            student_id=user.students
+            student_id=user.students,
+            fee_period=date.today().replace(day=1)
         )
 
         messages.success(request, "Student Added Successfully.")
@@ -583,7 +585,8 @@ def edit_student_save(request):
 
 def delete_student(request, student_id):
 
-    student = Students.objects.get(id=student_id)
+  # The link sends the CustomUser id, so find the student by their linked user
+    student = Students.objects.get(admin=student_id)
     user = student.admin
 
     try:
@@ -1006,28 +1009,3 @@ def add_fee(request, student_id):
         context
     )
 
-
-def add_fee_save(request):
-    if request.method != "POST":
-        return redirect('manage_fee')
-
-    student_id = request.POST.get('student_id')
-    fee_period = request.POST.get('fee_period')
-    due_date = request.POST.get('due_date')
-    total_fee = request.POST.get('total_fee')
-    paid_fee = request.POST.get('paid_fee')
-    paid_date = request.POST.get('paid_date')
-
-    student = Students.objects.get(id=student_id)
-
-    StudentFee.objects.create(
-        student_id=student,
-        fee_period=fee_period,
-        due_date=due_date if due_date else None,
-        total_fee=total_fee,
-        paid_fee=paid_fee,
-        paid_date=paid_date if paid_date else None
-    )
-
-    messages.success(request, "New Fee Added Successfully!")
-    return redirect('manage_fee')
