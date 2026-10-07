@@ -1,7 +1,7 @@
 {% extends 'hod_template/base_template.html' %}
 
 {% block page_title %}
-    Edit Fee
+    Add New Fee
 {% endblock page_title %}
 
 {% block main_content %}
@@ -15,47 +15,50 @@
                 <div class="card card-primary">
 
                     <div class="card-header">
-                        <h3 class="card-title">Student Fee</h3>
+                        <h3 class="card-title">Add New Fee</h3>
                     </div>
 
-                    <form method="POST" action="{% url 'edit_fee_save' %}">
+                    <form method="POST" action="{% url 'add_fee_save' %}">
                         {% csrf_token %}
 
                         <div class="card-body">
 
-                            <input type="hidden" name="fee_id" value="{{ fee.id }}">
+                            <input type="hidden"
+                                   name="student_id"
+                                   value="{{ student.id }}">
 
                             <div class="form-group">
                                 <label>Student</label>
+
                                 <input type="text"
                                        class="form-control"
-                                       value="{{ fee.student_id.admin.first_name }} {{ fee.student_id.admin.last_name }}"
+                                       value="{{ student.admin.first_name }} {{ student.admin.last_name }}"
                                        readonly>
                             </div>
 
                             <div class="form-group">
                                 <label>Fee Period</label>
+
                                 <input type="date"
                                        name="fee_period"
                                        class="form-control"
-                                       value="{{ fee.fee_period|date:'Y-m-d' }}"
                                        required>
                             </div>
 
                             <div class="form-group">
                                 <label>Due Date</label>
+
                                 <input type="date"
                                        name="due_date"
-                                       class="form-control"
-                                       value="{{ fee.due_date|date:'Y-m-d' }}">
+                                       class="form-control">
                             </div>
 
                             <div class="form-group">
                                 <label>Total Fee</label>
+
                                 <input type="number"
                                        name="total_fee"
                                        class="form-control"
-                                       value="{{ fee.total_fee }}"
                                        min="0"
                                        step="0.01"
                                        required>
@@ -63,32 +66,35 @@
 
                             <div class="form-group">
                                 <label>Paid Fee</label>
+
                                 <input type="number"
                                        name="paid_fee"
                                        class="form-control"
-                                       value="{{ fee.paid_fee }}"
                                        min="0"
                                        step="0.01"
+                                       value="0"
                                        required>
                             </div>
 
                             <div class="form-group">
                                 <label>Paid Date</label>
+
                                 <input type="date"
                                        name="paid_date"
-                                       class="form-control"
-                                       value="{{ fee.paid_date|date:'Y-m-d' }}">
+                                       class="form-control">
                             </div>
 
                         </div>
 
                         <div class="card-footer">
 
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit"
+                                    class="btn btn-primary">
                                 Save Fee
                             </button>
 
-                            <a href="{% url 'manage_fee' %}" class="btn btn-secondary">
+                            <a href="{% url 'manage_fee' %}"
+                               class="btn btn-secondary">
                                 Cancel
                             </a>
 

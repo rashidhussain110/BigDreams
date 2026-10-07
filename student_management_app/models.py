@@ -214,17 +214,23 @@ def save_user_profile(sender, instance, **kwargs):
 class StudentFee(models.Model):
     id = models.AutoField(primary_key=True)
 
-    student_id = models.OneToOneField(
-        Students,
-        on_delete=models.CASCADE
-    )
+    student_id = models.ForeignKey(
+    Students,
+    on_delete=models.CASCADE
+)
 
     total_fee = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0
     )
-
+    
+    fee_period = models.DateField()
+    
+    due_date = models.DateField(null=True, blank=True)
+    
+    paid_date = models.DateField(null=True, blank=True)
+    
     paid_fee = models.DecimalField(
         max_digits=10,
         decimal_places=2,

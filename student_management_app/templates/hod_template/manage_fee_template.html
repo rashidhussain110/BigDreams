@@ -79,6 +79,7 @@
                                     <th>Student Name</th>
                                     <th>Username</th>
                                     <th>Course</th>
+                                    <th>Fee Period</th>
                                     <th>Total Fee</th>
                                     <th>Paid Fee</th>
                                     <th>Remaining Fee</th>
@@ -105,13 +106,16 @@
                                     <td>
                                         {{ fee.student_id.admin.username }}
                                     </td>
-
                                     <td>
                                         {{ fee.student_id.course_id.course_name }}
                                     </td>
 
                                     <td>
-                                        Rs. {{ fee.total_fee }}
+                                       {{ fee.fee_period|date:"F Y" }}
+                                    </td>
+
+                                    <td>
+                                       Rs. {{ fee.total_fee }}
                                     </td>
 
                                     <td>
@@ -139,11 +143,16 @@
                                             </span>
                                         {% endif %}
                                     </td>
-                                    <td>
-                                      <a href="{% url 'edit_fee' fee.id %}" class="btn btn-success">
-                                      Edit Fee
-                                      </a>
-                                </td>
+                                <td>
+    <a href="{% url 'edit_fee' fee.id %}" class="btn btn-success">
+        Edit Fee
+    </a>
+
+    <a href="{% url 'fee_history' fee.student_id.id %}" class="btn btn-info">
+        <i class="fas fa-history"></i>
+        History
+    </a>
+</td>
 
                                 </tr>
 

@@ -1,0 +1,140 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Fee History
+{% endblock page_title %}
+
+{% block main_content %}
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3 class="card-title">
+                    Fee History -
+                    {{ student.admin.first_name }}
+                    {{ student.admin.last_name }}
+                </h3>
+            </div>
+
+            <div class="card-body table-responsive p-0">
+
+                <table class="table table-hover text-nowrap">
+
+                    <thead>
+                        <tr>
+                            <th>Fee Period</th>
+                            <th>Due Date</th>
+                            <th>Total Fee</th>
+                            <th>Paid Fee</th>
+                            <th>Remaining Fee</th>
+                            <th>Paid Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for fee in fees %}
+
+                        <tr>
+
+                            <td>
+                                {{ fee.fee_period|date:"F Y" }}
+                            </td>
+
+                            <td>
+                                {% if fee.due_date %}
+                                    {{ fee.due_date|date:"d M Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                Rs. {{ fee.total_fee }}
+                            </td>
+
+                            <td>
+                                Rs. {{ fee.paid_fee }}
+                            </td>
+
+                            <td>
+                                Rs. {{ fee.remaining_fee }}
+                            </td>
+
+                            <td>
+                                {% if fee.paid_date %}
+                                    {{ fee.paid_date|date:"d M Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if fee.fee_status == "Paid" %}
+                                    <span class="badge badge-success">
+                                        Paid
+                                    </span>
+
+                                {% elif fee.fee_status == "Partial" %}
+                                    <span class="badge badge-warning">
+                                        Partial
+                                    </span>
+
+                                {% else %}
+                                    <span class="badge badge-danger">
+                                        Unpaid
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{% url 'edit_fee' fee.id %}"
+                                   class="btn btn-success btn-sm">
+                                    Edit
+                                </a>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                No Fee History Found
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            
+        <div class="card-footer">
+
+    <a href="{% url 'add_fee' student.id %}"
+       class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Add New Fee
+    </a>
+
+    <a href="{% url 'manage_fee' %}"
+       class="btn btn-secondary">
+        Back to Fee Management
+    </a>
+
+</div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock main_content %}

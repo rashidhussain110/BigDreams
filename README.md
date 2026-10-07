@@ -1,164 +1,205 @@
-# Django Student Management System (beta)
-This is a Simple Student Management System Developed for Educational Purpose using Python (Django).
-Feel free to make changes based on your requirements.
+# Django Student Management System
 
-[Project Demo on YouTube](https://www.youtube.com/watch?v=kArCR96m7uo "Django Student Management System Demo")
+A web-based Student Management System developed with **Python and Django** for educational and academic management purposes.
 
-I've created this project while learnging Django and followed tutorial series from **SuperCoders**
+This project is based on the original Django Student Management System by **Vijay Thapa / SuperCoders** and has been customized and extended with additional features for practical use.
 
-And if you like this project then ADD a STAR ⭐️  to this project 👆
+## Features
 
-## Features of this Project
+### A. HOD / Admin
 
-### A. Admin Users Can
-1. See Overall Summary Charts of Stuudents Performance, Staffs Perfomrances, Courses, Subjects, Leave, etc.
-2. Manage Staffs (Add, Update and Delete)
-3. Manage Students (Add, Update and Delete)
-4. Manage Course (Add, Update and Delete)
-5. Manage Subjects (Add, Update and Delete)
-6. Manage Sessions (Add, Update and Delete)
-7. View Student Attendance
-8. Review and Reply Student/Staff Feedback
-9. Review (Approve/Reject) Student/Staff Leave
+* Admin/HOD Dashboard
+* Manage Students
+* Add, Update and Delete Students
+* Manage Staff/Teachers
+* Manage Courses
+* Manage Subjects
+* Manage Academic Sessions
+* View Student Attendance
+* Manage Student Results
+* Manage Student Leave
+* Manage Student/Staff Feedback
+* Search and filter records
+* Student registration system
+* Student profile management
 
-### B. Staff/Teachers Can
-1. See the Overall Summary Charts related to their students, their subjects, leave status, etc.
-2. Take/Update Students Attendance
-3. Add/Update Result
-4. Apply for Leave
-5. Send Feedback to HOD
+### B. Student Management
 
-### C. Students Can
-1. See the Overall Summary Charts related to their attendance, their subjects, leave status, etc.
-2. View Attendance
-3. View Result
-4. Apply for Leave
-5. Send Feedback to HOD
+* Student profiles
+* Course assignment
+* Academic session assignment
+* Student registration
+* Student attendance
+* Student results
+* Student leave requests
+* Student feedback
+* Student dashboard
 
+### C. Teacher / Staff Management
 
-## Support Developer
-1. Subscribe & Share my YouTube Channel - https://bit.ly/vijay-thapa-online-courses
-2. Add a Star 🌟  to this 👆 Repository
+* Teacher profiles
+* Subject assignment
+* Student attendance
+* Student results
+* Leave requests
+* Feedback to HOD
 
+## Fee Management
 
-## Donate
+The project includes a monthly student fee management system.
 
-**[PayPal](https://bit.ly/support-vijay-thapa)**
+### HOD / Admin Fee Features
 
-**[Buy me a Coffee  ☕️](https://www.buymeacoffee.com/vijaythapa)**
+* Manage student fees
+* Monthly fee records
+* Fee period/month
+* Total fee
+* Paid fee
+* Remaining fee calculation
+* Paid, Partial and Unpaid status
+* Due date
+* Paid date
+* Add new monthly fee without overwriting previous records
+* Edit individual fee records
+* View complete fee history for each student
+* Manage Fee shows the latest fee for each student
+* Fee History keeps all previous monthly records
+* Course filtering
+* Fee searching
 
-**Donate by wire transfer:** E-Mail at *donate@vijaythapa.com* for wire transfer details. 
+### Example
 
+A student can have separate monthly records:
 
-## How to Install and Run this project?
+* October 2026 — Rs. 5,000 — Paid
+* November 2026 — Rs. 5,000 — Paid
+* December 2026 — Rs. 5,000 — Partial
+* January 2027 — Rs. 5,000 — Unpaid
 
-### Pre-Requisites:
-1. Install Git Version Control
-[ https://git-scm.com/ ]
+Previous monthly records are preserved in Fee History.
 
-2. Install Python Latest Version
-[ https://www.python.org/downloads/ ]
+## Technology
 
-3. Install Pip (Package Manager)
-[ https://pip.pypa.io/en/stable/installing/ ]
+* **Python**
+* **Django**
+* **SQLite**
+* **HTML**
+* **CSS**
+* **JavaScript**
+* **Bootstrap**
+* **AdminLTE**
 
-*Alternative to Pip is Homebrew*
+## Project Structure
 
-### Installation
-**1. Create a Folder where you want to save the project**
-
-**2. Create a Virtual Environment and Activate**
-
-Install Virtual Environment First
-```
-$  pip install virtualenv
-```
-
-Create Virtual Environment
-
-For Windows
-```
-$  python -m venv venv
-```
-For Mac
-```
-$  python3 -m venv venv
-```
-
-Activate Virtual Environment
-
-For Windows
-```
-$  source venv/scripts/activate
-```
-
-For Mac
-```
-$  source venv/bin/activate
-```
-
-**3. Clone this project**
-```
-$  git clone https://github.com/vijaythapa333/django-student-management-system.git
-```
-
-Then, Enter the project
-```
-$  cd django-student-management-system
-```
-
-**4. Install Requirements from 'requirements.txt'**
-```python
-$  pip install -r requirements.txt
-```
-
-**5. Add the hosts**
-
-- Got to settings.py file 
-- Then, On allowed hosts, Add [‘*’]. 
-```python
-ALLOWED_HOSTS = ['*']
-```
-*No need to change on Mac.*
-
-
-**6. Now Run Server**
-
-Command for PC:
-```python
-$ python manage.py runserver
+```text
+django-student-management-system/
+│
+├── manage.py
+├── requirements.txt
+├── db.sqlite3
+│
+├── student_management_app/
+│   ├── models.py
+│   ├── HodViews.py
+│   ├── StaffViews.py
+│   ├── StudentViews.py
+│   ├── urls.py
+│   └── templates/
+│
+└── student_management_system/
+    ├── settings.py
+    ├── urls.py
+    └── ...
 ```
 
-Command for Mac:
-```python
-$ python3 manage.py runserver
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/rashidhussain110/BigDreams.git
 ```
 
-**7. Login Credentials**
+Enter the project:
 
-Create Super User (HOD)
+```bash
+cd BigDreams
 ```
-$  python manage.py createsuperuser
+
+### 2. Create a Virtual Environment
+
+For Windows:
+
+```bash
+python -m venv venv
 ```
-Then Add Email, Username and Password
 
-**or Use Default Credentials**
+Activate it:
 
-*For HOD /SuperAdmin*
-Email: admin@gmail.com
-Password: admin
+```bash
+venv\Scripts\activate
+```
 
-*For Staff*
-Email: staff@gmail.com
-Password: staff
+### 3. Install Requirements
 
-*For Student*
-Email: student@gmail.com
-Password: student
+```bash
+pip install -r requirements.txt
+```
 
+### 4. Run Database Migrations
 
+```bash
+python manage.py migrate
+```
 
-## For Sponsor or Projects Enquiry
-1. Email - hi@vijaythapa.com
-2. LinkedIn - [vijaythapa](https://www.linkedin.com/in/vijaythapa "Vijay Thapa on LinkedIn")
+### 5. Create an Admin/HOD Account
 
+```bash
+python manage.py createsuperuser
+```
+
+Follow the instructions in the terminal.
+
+### 6. Start the Development Server
+
+```bash
+python manage.py runserver
+```
+
+Open the project in your browser:
+
+```text
+http://127.0.0.1:8000/
+```
+
+## Development Status
+
+This project is under active development.
+
+Features are being added and improved gradually, including:
+
+* Student management
+* Academic management
+* Monthly fee management
+* Fee history
+* Student registration
+* Attendance
+* Results
+* Leave management
+* Feedback management
+
+## Original Project
+
+This project was originally based on the **Django Student Management System** developed by **Vijay Thapa / SuperCoders**.
+
+The original project was created as part of learning Django and has been customized and extended for this project.
+
+Original repository:
+
+https://github.com/vijaythapa333/django-student-management-system
+
+## License
+
+This project is intended for educational and development purposes.
+
+Please review the original project's license and attribution requirements before redistributing or publishing modified versions.

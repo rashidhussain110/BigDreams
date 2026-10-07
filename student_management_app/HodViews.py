@@ -401,19 +401,22 @@ def manage_student(request):
 
 def manage_fee(request):
 
-    students = Students.objects.select_related('admin', 'course_id').order_by('admin__first_name')
+    students = Students.objects.select_related(
+        'admin',
+        'course_id'
+    ).order_by(
+        Trim(Lower('admin__first_name'))
+    )
+
+    fees = []
 
     for student in students:
-        StudentFee.objects.get_or_create(
+        latest_fee = StudentFee.objects.filter(
             student_id=student
-        )
+        ).order_by('-fee_period').first()
 
-    fees = StudentFee.objects.select_related(
-    'student_id__admin',
-    'student_id__course_id'
-).order_by(
-    Trim(Lower('student_id__admin__first_name'))
-)
+        if latest_fee:
+            fees.append(latest_fee)
 
     courses = Courses.objects.all()
 
@@ -437,18 +440,82 @@ def edit_fee(request, fee_id):
 
     return render(request, 'hod_template/edit_fee_template.html', context)
 
+def fee_history(request, student_id):
+    student = Students.objects.get(id=student_id)
+
+    fees = StudentFee.objects.filter(
+        student_id=student
+    ).order_by('-fee_period')
+
+    context = {
+        "student": student,
+        "fees": fees
+    }
+
+    return render(
+        request,
+        'hod_template/fee_history_template.html',
+        context
+    )
+    
+    def add_fee(request, student_id):
+        student = Students.objects.get(id=student_id)
+
+    context = {
+        "student": student
+    }
+
+    return render(
+        request,
+        'hod_template/add_fee_template.html',
+        context
+    )
+
+
+def add_fee_save(request):
+    if request.method != "POST":
+        return redirect('manage_fee')
+
+    student_id = request.POST.get('student_id')
+    fee_period = request.POST.get('fee_period')
+    due_date = request.POST.get('due_date')
+    total_fee = request.POST.get('total_fee')
+    paid_fee = request.POST.get('paid_fee')
+    paid_date = request.POST.get('paid_date')
+
+    student = Students.objects.get(id=student_id)
+
+    StudentFee.objects.create(
+        student_id=student,
+        fee_period=fee_period,
+        due_date=due_date if due_date else None,
+        total_fee=total_fee,
+        paid_fee=paid_fee,
+        paid_date=paid_date if paid_date else None
+    )
+
+    messages.success(request, "New Fee Added Successfully!")
+    return redirect('manage_fee')
+
 def edit_fee_save(request):
     if request.method != "POST":
         return redirect('manage_fee')
 
     fee_id = request.POST.get('fee_id')
+    fee_period = request.POST.get('fee_period')
+    due_date = request.POST.get('due_date')
     total_fee = request.POST.get('total_fee')
     paid_fee = request.POST.get('paid_fee')
+    paid_date = request.POST.get('paid_date')
 
     fee = StudentFee.objects.get(id=fee_id)
 
+    fee.fee_period = fee_period
+    fee.due_date = due_date if due_date else None
     fee.total_fee = total_fee
     fee.paid_fee = paid_fee
+    fee.paid_date = paid_date if paid_date else None
+
     fee.save()
 
     messages.success(request, "Fee Updated Successfully!")
@@ -906,3 +973,61 @@ def student_registration(request):
         "student_registration/student_registration_template.html",
         context
     )
+
+def fee_history(request, student_id):
+    student = Students.objects.get(id=student_id)
+
+    fees = StudentFee.objects.filter(
+        student_id=student
+    ).order_by('-fee_period')
+
+    context = {
+        "student": student,
+        "fees": fees
+    }
+
+    return render(
+        request,
+        'hod_template/fee_history_template.html',
+        context
+    )
+
+
+def add_fee(request, student_id):
+    student = Students.objects.get(id=student_id)
+
+    context = {
+        "student": student
+    }
+
+    return render(
+        request,
+        'hod_template/add_fee_template.html',
+        context
+    )
+
+
+def add_fee_save(request):
+    if request.method != "POST":
+        return redirect('manage_fee')
+
+    student_id = request.POST.get('student_id')
+    fee_period = request.POST.get('fee_period')
+    due_date = request.POST.get('due_date')
+    total_fee = request.POST.get('total_fee')
+    paid_fee = request.POST.get('paid_fee')
+    paid_date = request.POST.get('paid_date')
+
+    student = Students.objects.get(id=student_id)
+
+    StudentFee.objects.create(
+        student_id=student,
+        fee_period=fee_period,
+        due_date=due_date if due_date else None,
+        total_fee=total_fee,
+        paid_fee=paid_fee,
+        paid_date=paid_date if paid_date else None
+    )
+
+    messages.success(request, "New Fee Added Successfully!")
+    return redirect('manage_fee')
