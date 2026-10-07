@@ -179,14 +179,27 @@ def save_attendance_data(request):
     # print(student_ids)
     try:
         # First Attendance Data is Saved on Attendance Model
-        attendance = Attendance(subject_id=subject_model, attendance_date=attendance_date, session_year_id=session_year_model)
-        attendance.save()
+                # Reuse the attendance record if this subject, session and date already has one
+        attendance = Attendance.objects.filter(
+            subject_id=subject_model,
+            attendance_date=attendance_date,
+            session_year_id=session_year_model
+        ).first()
+
+        # Create a new record only if none exists yet
+        if attendance is None:
+            attendance = Attendance(subject_id=subject_model, attendance_date=attendance_date, session_year_id=session_year_model)
+            attendance.save()
 
         for stud in json_student:
             # Attendance of Individual Student saved on AttendanceReport Model
             student = Students.objects.get(admin=stud['id'])
-            attendance_report = AttendanceReport(student_id=student, attendance_id=attendance, status=stud['status'])
-            attendance_report.save()
+                        # Update this student's row if it exists, otherwise create it
+            AttendanceReport.objects.update_or_create(
+                student_id=student,
+                attendance_id=attendance,
+                defaults={'status': stud['status']}
+            )
         return HttpResponse("OK")
     except:
         return HttpResponse("Error")

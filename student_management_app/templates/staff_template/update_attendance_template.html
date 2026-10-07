@@ -181,6 +181,19 @@
                 
         })
 
+        // When a switch is clicked, change the label between green Present and red Absent
+        $(document).on("change", ".attendance-switch", function(){
+            var badge = $(this).next("label").find(".badge");
+            if(this.checked)
+            {
+                badge.removeClass("badge-danger").addClass("badge-success").text("Present");
+            }
+            else
+            {
+                badge.removeClass("badge-success").addClass("badge-danger").text("Absent");
+            }
+        })
+
         // Now Working on Fetch Student after attendance date selected
         $("#fetch_student").click(function(){
 
@@ -206,32 +219,37 @@
 
                 for(key in json_data)
                 {
-                    div_data+="<div class='col-lg-3'><div class='form-check'><input type='checkbox' ";
+                    // status is 1 for Present, 0 for Absent
+                    var is_present = json_data[key]['status'];
+                    var switch_id = "student_" + json_data[key]['id'];
 
-                    if(json_data[key]['status'])
+                    // One row per student: name on the left, switch on the right
+                    div_data+="<div class='col-md-6 col-lg-4 mb-2'>";
+                    div_data+="<div class='d-flex justify-content-between align-items-center border rounded p-2 bg-white'>";
+                    div_data+="<span>"+ json_data[key]['name'] +"</span>";
+                    div_data+="<div class='custom-control custom-switch'>";
+
+                    // This input keeps name='student_data[]' so Save Attendance Data still works
+                    div_data+="<input type='checkbox' class='custom-control-input attendance-switch' id='"+ switch_id +"' name='student_data[]' value='"+ json_data[key]['id'] +"' ";
+                    if(is_present)
                     {
                         div_data+="checked='checked'";
                     }
-                    else
-                    {
-                        div_data+="";
-                    }
-                    div_data+="name='student_data[]' value='"+ json_data[key]['id'] +"' />  <label class='form-check-label'>"+ json_data[key]['name']+" </label> ";
-                    
-                    // Displaying Present and Absent
+                    div_data+=" />";
 
-                    if(json_data[key]['status'])
+                    // Green Present label or red Absent label
+                    div_data+="<label class='custom-control-label' for='"+ switch_id +"'>";
+                    if(is_present)
                     {
-                        div_data+="<b>[ Present ]</b>";
+                        div_data+="<span class='badge badge-success'>Present</span>";
                     }
                     else
                     {
-                        div_data+="<b>[ Absent ]</b>";
+                        div_data+="<span class='badge badge-danger'>Absent</span>";
                     }
-                    //Displaying Present and Absent Ends Here
-                    
+                    div_data+="</label>";
 
-                    div_data+="</div></div> ";
+                    div_data+="</div></div></div>";
                 }
                 div_data+="</div></div>";
                 div_data+="<div class='form-group'>";

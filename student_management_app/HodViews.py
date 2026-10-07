@@ -460,19 +460,6 @@ def fee_history(request, student_id):
         context
     )
     
-    def add_fee(request, student_id):
-        student = Students.objects.get(id=student_id)
-
-    context = {
-        "student": student
-    }
-
-    return render(
-        request,
-        'hod_template/add_fee_template.html',
-        context
-    )
-
 
 def add_fee_save(request):
     if request.method != "POST":
@@ -974,24 +961,6 @@ def student_registration(request):
     return render(
         request,
         "student_registration/student_registration_template.html",
-        context
-    )
-
-def fee_history(request, student_id):
-    student = Students.objects.get(id=student_id)
-
-    fees = StudentFee.objects.filter(
-        student_id=student
-    ).order_by('-fee_period')
-
-    context = {
-        "student": student,
-        "fees": fees
-    }
-
-    return render(
-        request,
-        'hod_template/fee_history_template.html',
         context
     )
 
