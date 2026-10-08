@@ -7,7 +7,7 @@
 {% block main_content %}
 
 <div class="row">
-    <div class="col-lg-3 col-6">
+    <div class="col-lg col-6">
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>Rs. {{ student_fee.total_fee }}</h3>
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
+    <div class="col-lg col-6">
         <div class="small-box bg-success">
             <div class="inner">
                 <h3>Rs. {{ student_fee.paid_fee }}</h3>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
+    <div class="col-lg col-6">
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3>Rs. {{ student_fee.remaining_fee }}</h3>
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
+    <div class="col-lg col-6">
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3>{{ student_fee.fee_status }}</h3>
@@ -42,8 +42,16 @@
             </div>
         </div>
     </div>
-</div>
 
+    <div class="col-lg col-6">
+        <div class="small-box bg-primary">
+            <a href="{% url 'student_fee_history' %}" class="inner d-block text-white" style="text-decoration:none;">
+                <h3>History</h3>
+                <p>Fee History</p>
+            </a>
+        </div>
+    </div>
+</div>
 {% load static %}
 
 <section class="content">
@@ -51,7 +59,7 @@
 
             {% comment %} Boxes Section Starts {% endcomment %}
             <div class="row">
-                <div class="col-lg-3 col-6">
+                <div class="col-lg col-6">
                     <!-- small box -->
                     <div class="small-box bg-info">
                     <div class="inner">
@@ -66,7 +74,7 @@
                     </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-6">
+                <div class="col-lg col-6">
                     <!-- small box -->
                     <div class="small-box bg-success">
                     <div class="inner">
@@ -81,7 +89,7 @@
                     </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-6">
+                <div class="col-lg col-6">
                     <!-- small box -->
                     <div class="small-box bg-warning">
                     <div class="inner">
@@ -96,7 +104,7 @@
                     </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-6">
+                <div class="col-lg col-6">
                     <!-- small box -->
                     <div class="small-box bg-danger">
                     <div class="inner">
@@ -111,7 +119,21 @@
                     </div>
                 </div>
                 <!-- ./col -->
+                <div class="col-lg col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h3>{{ approved_leaves }}</h3>
+                        <p>Approved Leaves</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <a href="{% url 'student_apply_leave' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
                 </div>
+                <!-- ./col -->
+            </div>
             {% comment %} Boxes Section Ends {% endcomment %}
 
             <div class="row">

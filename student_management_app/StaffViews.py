@@ -366,3 +366,35 @@ def staff_add_result_save(request):
         except:
             messages.error(request, "Failed to Add Result!")
             return redirect('staff_add_result')
+
+
+@csrf_exempt
+def get_students_on_leave(request):
+    # Local import, so the top of the file does not need to change
+    from student_management_app.models import LeaveReportStudent
+
+    # Values sent by the Take Attendance page
+    attendance_date = request.POST.get("attendance_date")   # looks like 2026-10-08
+    subject_id = request.POST.get("subject")
+    session_year = request.POST.get("session_year")
+
+    # Same students that Take Attendance lists for this subject and session
+    subject_model = Subjects.objects.get(id=subject_id)
+    students = Students.objects.filter(course_id=subject_model.course_id, session_year_id=session_year)
+
+    # Approved leaves (status 1) that started on or before this date
+    leaves = LeaveReportStudent.objects.filter(
+        student_id__in=students,
+        leave_status=1,
+        leave_date__lte=attendance_date
+    )
+
+    on_leave = set()
+    for leave in leaves:
+        # No "up to" date means the leave is a single day
+        last_day = str(leave.leave_end_date) if leave.leave_end_date else leave.leave_date
+        if attendance_date <= last_day:
+            on_leave.add(leave.student_id.admin.id)
+
+    # List of user ids (the same ids Take Attendance uses for students)
+    return JsonResponse(list(on_leave), safe=False)

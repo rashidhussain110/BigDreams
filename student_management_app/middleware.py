@@ -56,6 +56,7 @@ class RoleBasedAccessMiddleware:
             "/student_profile/",
             "/student_profile_update/",
             "/student_view_result/",
+            "/student_fee_history/",
         ]
 
         # HOD URLs

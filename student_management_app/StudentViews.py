@@ -21,7 +21,10 @@ def student_home(request):
     data_present = []
     data_absent = []
     subject_data = Subjects.objects.filter(course_id=student_obj.course_id)
-    student_fee = StudentFee.objects.filter(student_id=student_obj).first()
+        # Show the latest fee month on the dashboard (newest fee_period first)
+    student_fee = StudentFee.objects.filter(student_id=student_obj).order_by('-fee_period').first()
+        # Number of leave requests the HOD has approved (leave_status 1 = Approved)
+    approved_leaves = LeaveReportStudent.objects.filter(student_id=student_obj, leave_status=1).count()
     for subject in subject_data:
         attendance = Attendance.objects.filter(subject_id=subject.id)
         attendance_present_count = AttendanceReport.objects.filter(attendance_id__in=attendance, status=True, student_id=student_obj.id).count()
@@ -38,7 +41,8 @@ def student_home(request):
         "subject_name": subject_name,
         "data_present": data_present,
         "data_absent": data_absent,
-        "student_fee": student_fee
+        "student_fee": student_fee,
+        "approved_leaves": approved_leaves
     }
     return render(request, "student_template/student_home_template.html", context)
 
@@ -108,11 +112,21 @@ def student_apply_leave_save(request):
         return redirect('student_apply_leave')
     else:
         leave_date = request.POST.get('leave_date')
+        leave_end_date = request.POST.get('leave_end_date')  # optional last day of leave
         leave_message = request.POST.get('leave_message')
+
+        # An empty "up to" date means the leave is for a single day
+        if not leave_end_date:
+            leave_end_date = None
+
+        # The last day can not be before the first day (dates look like 2026-10-06, so text comparison works)
+        if leave_end_date and leave_date and leave_end_date < leave_date:
+            messages.error(request, "Up To Date can not be before the Start Date.")
+            return redirect('student_apply_leave')
 
         student_obj = Students.objects.get(admin=request.user.id)
         try:
-            leave_report = LeaveReportStudent(student_id=student_obj, leave_date=leave_date, leave_message=leave_message, leave_status=0)
+            leave_report = LeaveReportStudent(student_id=student_obj, leave_date=leave_date, leave_end_date=leave_end_date, leave_message=leave_message, leave_status=0)
             leave_report.save()
             messages.success(request, "Applied for Leave.")
             return redirect('student_apply_leave')
@@ -198,5 +212,15 @@ def student_view_result(request):
 
 
 
+def student_fee_history(request):
+    # Find the logged-in student's own profile (never trust an ID from the link)
+    student_obj = Students.objects.get(admin=request.user.id)
 
+    # All of this student's monthly fees, newest month first
+    fees = StudentFee.objects.filter(student_id=student_obj).order_by('-fee_period')
 
+    context = {
+        "student": student_obj,
+        "fees": fees
+    }
+    return render(request, "student_template/student_fee_history_template.html", context)

@@ -49,9 +49,14 @@
                         {% csrf_token %}
                         <div class="card-body">
                            
-                            <div class="form-group">
-                                <label>Leave Date </label>
+                                                       <div class="form-group">
+                                <label>Leave Date (Start) </label>
                                 <input type="date" name="leave_date" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Leave Up To Date (last day, optional) </label>
+                                <input type="date" name="leave_end_date" class="form-control" />
                             </div>
 
                             <div class="form-group">
@@ -99,7 +104,12 @@
                                     {% for leave in leave_data %}
                                     <tr>
                                         <td>{{ leave.id }}</td>
-                                        <td>{{ leave.leave_date }}</td>
+                                        <td>
+                                            {{ leave.leave_date }}
+                                            {% if leave.leave_end_date %}
+                                                to {{ leave.leave_end_date|date:"Y-m-d" }}
+                                            {% endif %}
+                                        </td>
                                         <td>{{ leave.leave_message }}</td>
                                         <td>
                                             {% if leave.leave_status == 1 %}
