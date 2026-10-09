@@ -65,6 +65,9 @@ urlpatterns = [
     path('admin_get_attendance_student/', HodViews.admin_get_attendance_student, name="admin_get_attendance_student"),
     path('admin_profile/', HodViews.admin_profile, name="admin_profile"),
     path('admin_profile_update/', HodViews.admin_profile_update, name="admin_profile_update"),
+    path('manage_announcement/', HodViews.manage_announcement, name="manage_announcement"),
+    path('add_announcement_save/', HodViews.add_announcement_save, name="add_announcement_save"),
+    path('delete_announcement/<int:announcement_id>/', HodViews.delete_announcement, name="delete_announcement"),
     
 
 
@@ -72,6 +75,7 @@ urlpatterns = [
     path('staff_home/', StaffViews.staff_home, name="staff_home"),
     path('staff_take_attendance/', StaffViews.staff_take_attendance, name="staff_take_attendance"),
     path('get_students/', StaffViews.get_students, name="get_students"),
+    path('get_students_on_leave/', StaffViews.get_students_on_leave, name='get_students_on_leave'),
     path('save_attendance_data/', StaffViews.save_attendance_data, name="save_attendance_data"),
     path('staff_update_attendance/', StaffViews.staff_update_attendance, name="staff_update_attendance"),
     path('get_attendance_dates/', StaffViews.get_attendance_dates, name="get_attendance_dates"),
@@ -85,6 +89,7 @@ urlpatterns = [
     path('staff_profile_update/', StaffViews.staff_profile_update, name="staff_profile_update"),
     path('staff_add_result/', StaffViews.staff_add_result, name="staff_add_result"),
     path('staff_add_result_save/', StaffViews.staff_add_result_save, name="staff_add_result_save"),
+    path('staff_announcements/', StaffViews.staff_announcements, name="staff_announcements"),
 
     # URSL for Student
     path('student_home/', StudentViews.student_home, name="student_home"),
@@ -98,4 +103,5 @@ urlpatterns = [
     path('student_profile_update/', StudentViews.student_profile_update, name="student_profile_update"),
     path('student_view_result/', StudentViews.student_view_result, name="student_view_result"),
     path('student_fee_history/', StudentViews.student_fee_history, name="student_fee_history"),
+    path('student_announcements/', StudentViews.student_announcements, name="student_announcements"),
 ]

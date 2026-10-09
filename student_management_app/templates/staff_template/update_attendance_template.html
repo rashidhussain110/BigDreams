@@ -223,6 +223,22 @@
                     var is_present = json_data[key]['status'];
                     var switch_id = "student_" + json_data[key]['id'];
 
+                    // Student on approved leave: shown locked, with an On Leave label, and never saved
+                    if(json_data[key]['leave'])
+                    {
+                        div_data+="<div class='col-md-6 col-lg-4 mb-2'>";
+                        div_data+="<div class='d-flex justify-content-between align-items-center border rounded p-2 bg-light'>";
+                        div_data+="<span>"+ json_data[key]['name'] +"</span>";
+                        div_data+="<div class='custom-control custom-switch'>";
+
+                        // No name attribute, so Save Attendance Data never sends this student
+                        div_data+="<input type='checkbox' class='custom-control-input' id='leave_"+ json_data[key]['id'] +"' disabled='disabled' />";
+                        div_data+="<label class='custom-control-label' for='leave_"+ json_data[key]['id'] +"'><span class='badge badge-warning'>On Leave</span></label>";
+
+                        div_data+="</div></div></div>";
+                        continue;
+                    }
+
                     // One row per student: name on the left, switch on the right
                     div_data+="<div class='col-md-6 col-lg-4 mb-2'>";
                     div_data+="<div class='d-flex justify-content-between align-items-center border rounded p-2 bg-white'>";

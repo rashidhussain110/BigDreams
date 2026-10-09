@@ -245,6 +245,9 @@ def get_attendance_dates(request):
 
 @csrf_exempt
 def get_attendance_student(request):
+    # Local import, so the top of the file does not need to change
+    from student_management_app.models import LeaveReportStudent
+
     # Getting Values from Ajax POST 'Fetch Student'
     attendance_date = request.POST.get('attendance_date')
     attendance = Attendance.objects.get(id=attendance_date)
@@ -252,12 +255,27 @@ def get_attendance_student(request):
     attendance_data = AttendanceReport.objects.filter(attendance_id=attendance)
     # Only Passing Student Id and Student Name Only
     list_data = []
+    listed_ids = set()
 
     for student in attendance_data:
-        data_small={"id":student.student_id.admin.id, "name":student.student_id.admin.first_name+" "+student.student_id.admin.last_name, "status":student.status}
+        data_small={"id":student.student_id.admin.id, "name":student.student_id.admin.first_name+" "+student.student_id.admin.last_name, "status":student.status, "leave":False}
         list_data.append(data_small)
+        listed_ids.add(student.student_id.admin.id)
 
-    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False)
+    # Add students who were on approved leave on this attendance date (they have no saved record)
+    day = str(attendance.attendance_date)  # looks like 2026-10-08
+    students = Students.objects.filter(course_id=attendance.subject_id.course_id, session_year_id=attendance.session_year_id)
+    leaves = LeaveReportStudent.objects.filter(student_id__in=students, leave_status=1, leave_date__lte=day)
+
+    for leave in leaves:
+        # No "up to" date means the leave is a single day
+        last_day = str(leave.leave_end_date) if leave.leave_end_date else leave.leave_date
+        admin_user = leave.student_id.admin
+        if day <= last_day and admin_user.id not in listed_ids:
+            list_data.append({"id":admin_user.id, "name":admin_user.first_name+" "+admin_user.last_name, "status":0, "leave":True})
+            listed_ids.add(admin_user.id)
+
+    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False) 
 
 
 @csrf_exempt
@@ -398,3 +416,25 @@ def get_students_on_leave(request):
 
     # List of user ids (the same ids Take Attendance uses for students)
     return JsonResponse(list(on_leave), safe=False)
+
+def staff_announcements(request):
+    # Local import, so the top of the file does not need to change
+    from student_management_app.models import Announcement, AnnouncementRead
+
+    announcements = list(Announcement.objects.all().order_by('-created_at'))
+
+    # Which announcements has this staff member already opened?
+    read_ids = set(AnnouncementRead.objects.filter(user=request.user).values_list('announcement_id', flat=True))
+
+    # Tag the unread ones so the page can show a "New" label
+    for announcement in announcements:
+        announcement.is_new = announcement.id not in read_ids
+
+    # Mark all of them as read now (this makes the number badge disappear)
+    AnnouncementRead.objects.bulk_create(
+        [AnnouncementRead(user=request.user, announcement=a) for a in announcements if a.is_new],
+        ignore_conflicts=True
+    )
+
+    context = {"announcements": announcements}
+    return render(request, "staff_template/staff_announcements_template.html", context)

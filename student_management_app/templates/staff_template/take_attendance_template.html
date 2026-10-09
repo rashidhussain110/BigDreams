@@ -78,6 +78,12 @@
         transform: translateY(-1px);
     }
 
+    /* Student who has an approved leave on the chosen date */
+    .student-card.on-leave {
+        background: #fff8e1;
+        border-color: #ffc107;
+    }
+
     .student-name {
         font-weight: 600;
         color: #343a40;
@@ -120,6 +126,12 @@
 
     .attendance-btn:hover {
         opacity: 0.9;
+    }
+
+    /* Locked buttons for students on leave */
+    .attendance-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     .top-actions {
@@ -411,12 +423,73 @@ $(document).ready(function () {
     });
 
 
+    // When the date is picked, find students who have an approved leave on that date
+    $(document).on("change", "#attendance_date", function () {
+
+        var attendance_date = $(this).val();
+
+        // First undo "On Leave" on every card (the date may have been changed before)
+        $(".student-card.on-leave").each(function () {
+            $(this).removeClass("on-leave");
+            $(this).find(".leave-label").remove();
+            $(this).find(".attendance-btn").prop("disabled", false).removeClass("active");
+            $(this).find(".present").addClass("active");
+            $(this).find(".student-attendance").prop("checked", true);
+        });
+
+        if (!attendance_date) {
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'get_students_on_leave' %}",
+            type: "POST",
+            data: {
+                attendance_date: attendance_date,
+                subject: $("#subject").val(),
+                session_year: $("#session_year").val()
+            }
+        })
+
+        .done(function (leave_ids) {
+
+            // leave_ids is a list of student ids who are on approved leave
+            $(".student-card").each(function () {
+
+                var card = $(this);
+                var student_id = String(card.find(".student-attendance").val());
+
+                if (leave_ids.map(String).indexOf(student_id) !== -1) {
+
+                    card.addClass("on-leave");
+                    card.find(".student-name").append(' <span class="badge badge-warning leave-label ml-2">On Leave</span>');
+
+                    // Switch off and lock the buttons
+                    card.find(".attendance-btn").removeClass("active").prop("disabled", true);
+                    card.find(".student-attendance").prop("checked", false);
+                }
+            });
+
+        })
+
+        .fail(function () {
+            console.log("Could not check student leaves.");
+        });
+
+    });
+
+
     // Present / Absent buttons
     $(document).on("click", ".attendance-btn", function () {
 
         var student_id = $(this).data("student");
         var card = $(this).closest(".student-card");
         var checkbox = card.find(".student-attendance");
+
+        // Students on leave are locked
+        if (card.hasClass("on-leave")) {
+            return;
+        }
 
         if ($(this).hasClass("present")) {
 
@@ -436,10 +509,10 @@ $(document).ready(function () {
     });
 
 
-    // Mark all Present
+    // Mark all Present (students on leave are skipped)
     $(document).on("click", "#mark_all_present", function () {
 
-        $(".student-card").each(function () {
+        $(".student-card").not(".on-leave").each(function () {
 
             $(this).find(".present").addClass("active");
             $(this).find(".absent").removeClass("active");
@@ -450,10 +523,10 @@ $(document).ready(function () {
     });
 
 
-    // Mark all Absent
+    // Mark all Absent (students on leave are skipped)
     $(document).on("click", "#mark_all_absent", function () {
 
-        $(".student-card").each(function () {
+        $(".student-card").not(".on-leave").each(function () {
 
             $(this).find(".absent").addClass("active");
             $(this).find(".present").removeClass("active");
@@ -473,7 +546,8 @@ $(document).ready(function () {
             .prop("disabled", true)
             .html('<i class="fas fa-spinner fa-spin"></i> Saving Attendance...');
 
-        var student_data = $("input[name='student_data[]']").map(function () {
+        // Only students who are NOT on leave are saved
+        var student_data = $(".student-card").not(".on-leave").find("input[name='student_data[]']").map(function () {
 
             if ($(this).is(":checked")) {
 
@@ -500,6 +574,18 @@ $(document).ready(function () {
         if (!attendance_date) {
 
             alert("Please select Attendance Date.");
+
+            saveButton
+                .prop("disabled", false)
+                .html('<i class="fas fa-save"></i> Save Attendance');
+
+            return;
+        }
+
+        // Nothing to save when every student is on leave
+        if (student_data.length === 0) {
+
+            alert("All students are on leave for this date. Nothing to save.");
 
             saveButton
                 .prop("disabled", false)

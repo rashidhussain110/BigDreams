@@ -29,6 +29,7 @@ class RoleBasedAccessMiddleware:
             "/staff_home/",
             "/staff_take_attendance/",
             "/get_students/",
+            "/get_students_on_leave/",
             "/save_attendance_data/",
             "/staff_update_attendance/",
             "/get_attendance_dates/",
@@ -42,6 +43,7 @@ class RoleBasedAccessMiddleware:
             "/staff_profile_update/",
             "/staff_add_result/",
             "/staff_add_result_save/",
+            "/staff_announcements/",
         ]
 
         # Student-only URLs
@@ -57,6 +59,7 @@ class RoleBasedAccessMiddleware:
             "/student_profile_update/",
             "/student_view_result/",
             "/student_fee_history/",
+            "/student_announcements/",
         ]
 
         # HOD URLs
@@ -87,6 +90,9 @@ class RoleBasedAccessMiddleware:
             "/delete_subject/",
             "/admin_view_attendance/",
             "/admin_profile/",
+            "/manage_announcement/",
+            "/add_announcement_save/",
+            "/delete_announcement/",
         ]
 
         # Staff access check

@@ -978,3 +978,40 @@ def add_fee(request, student_id):
         context
     )
 
+
+def manage_announcement(request):
+    # Local import, so the top of the file does not need to change
+    from student_management_app.models import Announcement
+
+    # Newest announcement first
+    announcements = Announcement.objects.all().order_by('-created_at')
+    context = {"announcements": announcements}
+    return render(request, "hod_template/manage_announcement_template.html", context)
+
+
+def add_announcement_save(request):
+    from student_management_app.models import Announcement
+
+    if request.method != "POST":
+        return redirect('manage_announcement')
+
+    title = request.POST.get('title', '').strip()
+    message = request.POST.get('message', '').strip()
+
+    # Both boxes must be filled
+    if not title or not message:
+        messages.error(request, "Please write both a title and a message.")
+        return redirect('manage_announcement')
+
+    Announcement.objects.create(title=title, message=message)
+    messages.success(request, "Announcement Posted Successfully!")
+    return redirect('manage_announcement')
+
+
+def delete_announcement(request, announcement_id):
+    from student_management_app.models import Announcement
+
+    # Deleting the announcement also removes its "read" marks
+    Announcement.objects.filter(id=announcement_id).delete()
+    messages.success(request, "Announcement Deleted.")
+    return redirect('manage_announcement')

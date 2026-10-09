@@ -1,0 +1,232 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Announcements
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<style>
+    .ann-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: #fff;
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+    }
+
+    .ann-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .ann-header p {
+        margin: 5px 0 0;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+
+    .ann-form-card {
+        border: 0;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .ann-form-card .card-header {
+        background: #fff;
+        border-bottom: 1px solid #eef0f3;
+        font-weight: 600;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .ann-form-card label {
+        font-weight: 600;
+        color: #343a40;
+    }
+
+    .ann-count {
+        font-size: 12px;
+        color: #888;
+        text-align: right;
+    }
+
+    .ann-item {
+        background: #fff;
+        border: 1px solid #e5e8ec;
+        border-left: 5px solid #007bff;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        transition: 0.2s ease;
+    }
+
+    .ann-item:hover {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .ann-item-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .ann-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+    }
+
+    .ann-date {
+        font-size: 12px;
+        color: #8a8f98;
+        margin-top: 3px;
+    }
+
+    .ann-message {
+        margin-top: 10px;
+        color: #495057;
+        font-size: 14.5px;
+        line-height: 1.55;
+    }
+
+    .ann-empty {
+        text-align: center;
+        padding: 40px 10px;
+        color: #8a8f98;
+    }
+
+    .ann-empty i {
+        font-size: 42px;
+        margin-bottom: 10px;
+        opacity: 0.5;
+    }
+
+    .ann-badge-total {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+</style>
+
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="ann-header d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+                <p>Write a message once. Every staff member and student sees it on their dashboard.</p>
+            </div>
+            <span class="ann-badge-total">{{ announcements|length }} posted</span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    </div>
+                {% elif message.tags == "success" %}
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+
+            <!-- Write a new announcement -->
+            <div class="col-lg-5">
+                <div class="card ann-form-card">
+                    <div class="card-header">
+                        <i class="fas fa-pen"></i> New Announcement
+                    </div>
+                    <form method="POST" action="{% url 'add_announcement_save' %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" name="title" class="form-control" maxlength="255" placeholder="For example: Exam schedule" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea name="message" id="ann_message" class="form-control" rows="7" maxlength="2000" placeholder="Write your announcement here..." required></textarea>
+                                <div class="ann-count"><span id="ann_count">0</span> / 2000</div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer bg-white" style="border-radius: 0 0 12px 12px;">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-paper-plane"></i> Post Announcement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Posted announcements -->
+            <div class="col-lg-7">
+
+                {% for announcement in announcements %}
+                    <div class="ann-item">
+                        <div class="ann-item-top">
+                            <div>
+                                <h5 class="ann-title">{{ announcement.title }}</h5>
+                                <div class="ann-date">
+                                    <i class="far fa-clock"></i>
+                                    {{ announcement.created_at|date:"d M Y, h:i A" }}
+                                </div>
+                            </div>
+                            <a href="{% url 'delete_announcement' announcement.id %}"
+                               class="btn btn-sm btn-outline-danger ann-delete"
+                               title="Delete this announcement">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        <div class="ann-message">{{ announcement.message|linebreaksbr }}</div>
+                    </div>
+                {% empty %}
+                    <div class="ann-empty">
+                        <i class="fas fa-bullhorn"></i>
+                        <h5>No announcements yet</h5>
+                        <p>Your posted announcements will appear here.</p>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div><!-- /.container-fluid -->
+</section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $(document).ready(function () {
+
+        // Live character counter for the message box
+        $("#ann_message").on("input", function () {
+            $("#ann_count").text($(this).val().length);
+        });
+
+        // Ask before deleting an announcement
+        $(".ann-delete").click(function () {
+            return confirm("Delete this announcement? Staff and students will no longer see it.");
+        });
+
+    });
+</script>
+{% endblock custom_js %}

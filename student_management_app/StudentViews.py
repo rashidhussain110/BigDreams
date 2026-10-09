@@ -224,3 +224,25 @@ def student_fee_history(request):
         "fees": fees
     }
     return render(request, "student_template/student_fee_history_template.html", context)
+
+def student_announcements(request):
+    # Local import, so the top of the file does not need to change
+    from student_management_app.models import Announcement, AnnouncementRead
+
+    announcements = list(Announcement.objects.all().order_by('-created_at'))
+
+    # Which announcements has this student already opened?
+    read_ids = set(AnnouncementRead.objects.filter(user=request.user).values_list('announcement_id', flat=True))
+
+    # Tag the unread ones so the page can show a "New" label
+    for announcement in announcements:
+        announcement.is_new = announcement.id not in read_ids
+
+    # Mark all of them as read now (this makes the number badge disappear)
+    AnnouncementRead.objects.bulk_create(
+        [AnnouncementRead(user=request.user, announcement=a) for a in announcements if a.is_new],
+        ignore_conflicts=True
+    )
+
+    context = {"announcements": announcements}
+    return render(request, "student_template/student_announcements_template.html", context)

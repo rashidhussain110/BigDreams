@@ -257,3 +257,24 @@ class StudentFee(models.Model):
             return "Paid"
         
         
+class Announcement(models.Model):
+    # A message written by the HOD for all staff and students
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
+
+
+class AnnouncementRead(models.Model):
+    # Remembers which user has opened which announcement (used for the unread number)
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE)
+    read_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
+
+    class Meta:
+        # One user can only have one "read" mark per announcement
+        unique_together = ('user', 'announcement')        

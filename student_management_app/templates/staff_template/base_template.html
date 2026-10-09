@@ -52,7 +52,17 @@
 
       <ul class="navbar-nav ml-auto">
       
-      <!-- Notifications Dropdown Menu -->
+      <!-- Announcements bell with unread number -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'staff_announcements' %}" title="Announcements">
+          <i class="fas fa-bell"></i>
+          {% if unread_announcements %}
+            <span class="badge badge-danger navbar-badge">{{ unread_announcements }}</span>
+          {% endif %}
+        </a>
+      </li>
+
+        <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
           <i class="fas fa-cog"></i>

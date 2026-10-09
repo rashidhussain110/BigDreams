@@ -2,7 +2,7 @@
 
 A web-based Student Management System developed with **Python and Django** for educational and academic management purposes.
 
-This project is based on the original Django Student Management System by **Vijay Thapa / SuperCoders** and has been customized and extended with additional features for practical use.
+This project is based on the Django Student Management System  work by **BIG DREAM / ADNAN PANHWER** and has been customized and extended with additional features for practical use.
 
 ## Features
 
@@ -190,7 +190,7 @@ Features are being added and improved gradually, including:
 
 ## Original Project
 
-This project was originally based on the **Django Student Management System** developed by **Vijay Thapa / SuperCoders**.
+This project was originally based on the **Django Student Management System** developed by **Vijay Thapa / SuperCoders**. and Further Work By **BIG DREAM / ADNAN PANHWAR**
 
 The original project was created as part of learning Django and has been customized and extended for this project.
 
